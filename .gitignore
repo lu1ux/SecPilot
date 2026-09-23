@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables / secrets
+.env
+.env.*
+
+!.env.example
+
+# Local SecPilot configuration
+config/policy.yaml
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Runtime data
+logs/
+reports/
+output/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3

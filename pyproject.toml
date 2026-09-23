@@ -1,0 +1,20 @@
+[project]
+name = "secpilot"
+version = "0.0.1"
+description = "Evidence-driven AI security testing framework based on Agent, Security Skills and MCP."
+readme = "README.md"
+requires-python = ">=3.14"
+
+dependencies = [
+    "httpx",
+    "pydantic>=2.12",
+    "PyYAML",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
