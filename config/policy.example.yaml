@@ -1,0 +1,16 @@
+scope:
+  allowed_hosts:
+    - "127.0.0.1"
+    - "localhost"
+    - "dvwa.local"
+
+  allowed_schemes:
+    - "http"
+    - "https"
+
+http:
+  timeout_seconds: 10
+  follow_redirects: false
+
+network:
+  max_response_size: 1048576
