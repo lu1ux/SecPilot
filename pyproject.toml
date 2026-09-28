@@ -1,8 +1,19 @@
+[build-system]
+requires = [
+    "setuptools>=77",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+
 [project]
 name = "secpilot"
 version = "0.0.1"
+
 description = "Evidence-driven AI security testing framework based on Agent, Security Skills and MCP."
+
 readme = "README.md"
+
 requires-python = ">=3.14"
 
 dependencies = [
@@ -11,10 +22,41 @@ dependencies = [
     "PyYAML",
 ]
 
+
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-asyncio",
 ]
 
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+include = [
+    "secpilot",
+    "secpilot.*",
+]
+
+exclude = [
+    "tests",
+    "tests.*",
+    "config",
+    "config.*",
+    "docs",
+    "docs.*",
+    "examples",
+    "examples.*",
+    "scripts",
+    "scripts.*",
+]
+
+namespaces = false
+
+
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [
+    "tests",
+]
+
+asyncio_mode = "auto"
