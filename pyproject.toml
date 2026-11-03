@@ -20,6 +20,7 @@ dependencies = [
     "httpx",
     "pydantic>=2.12",
     "PyYAML",
+    "mcp>=2,<3",
 ]
 
 
@@ -27,6 +28,7 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-asyncio",
+    "mcp[cli]>=2,<3",
 ]
 
 
