@@ -1,0 +1,26 @@
+active_profile: glm
+
+
+profiles:
+
+  glm:
+    adapter: openai_compatible
+
+    base_url: "https://open.bigmodel.cn/api/paas/v4"
+
+    model: "glm-5.3-flash"
+
+    api_key_env: "ZHIPU_API_KEY"
+
+    proxy_url_env: "SECPILOT_LLM_PROXY_URL"
+
+    timeout_seconds: 60
+
+    max_output_tokens: 1200
+
+    capabilities:
+      structured_output: false
+      json_mode: false
+      tool_calling: false
+      streaming: false
+      vision: false

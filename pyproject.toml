@@ -20,6 +20,7 @@ dependencies = [
     "httpx",
     "pydantic>=2.12",
     "PyYAML",
+    "python-dotenv",
     "mcp>=2,<3",
 ]
 
