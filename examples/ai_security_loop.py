@@ -29,6 +29,16 @@ from secpilot.llm import (
 from secpilot.policy.engine import (
     PolicyEngine,
 )
+from secpilot.report.renderers import (
+    render_report_json,
+    render_report_markdown,
+)
+from secpilot.risk.engine import (
+    RiskEngine,
+)
+from secpilot.scan.runner import (
+    ScanRunner,
+)
 from secpilot.skills.registry import (
     SkillRegistry,
 )
@@ -322,70 +332,180 @@ async def main():
         )
 
         # ====================================================
-        # 8. Original Request
+        # 8. Batch Scan Requests
+        #
+        # 1. /product?id=1        可注入参数
+        # 2. /product?id=7        可注入参数
+        # 3. /nonexistent?id=1    不存在的路径
+        #    所有验证轮失败
+        #    → REJECTED / INFO
         # ====================================================
 
-        request = HttpRequest(
-            method="GET",
+        requests = [
+            HttpRequest(
+                method="GET",
 
-            url=target_url,
+                url=target_url,
 
-            params={
-                "id": "1"
-            },
+                params={
+                    "id": "1"
+                },
+            ),
+
+            HttpRequest(
+                method="GET",
+
+                url=target_url,
+
+                params={
+                    "id": "7"
+                },
+            ),
+
+            HttpRequest(
+                method="GET",
+
+                url=(
+                    f"{base_url}"
+                    f"/nonexistent"
+                ),
+
+                params={
+                    "id": "1"
+                },
+            ),
+        ]
+
+        # ====================================================
+        # 9. Batch Scan
+        #
+        # ScanRunner 负责：
+        #
+        #     顺序执行
+        #     单请求失败不中断
+        #     RiskEngine 评级
+        #     汇总 ScanReport
+        # ====================================================
+
+        scan_runner = ScanRunner(
+            agent_runner=runner,
+
+            risk_engine=RiskEngine(),
+        )
+
+        report = (
+            await scan_runner
+            .run_scan(requests)
         )
 
         # ====================================================
-        # 9. AI Security Testing Loop
+        # 10. Report Output
+        #
+        # output/ 已在 .gitignore 中。
+        # 文件名带报告 ID 前缀，
+        # 多次运行互不覆盖。
         # ====================================================
 
-        result = await runner.run(
-            request
+        output_dir = (
+            PROJECT_ROOT
+            / "output"
+        )
+
+        output_dir.mkdir(
+            exist_ok=True
+        )
+
+        json_path = (
+            output_dir
+            / f"{report.id[:8]}_report.json"
+        )
+
+        markdown_path = (
+            output_dir
+            / f"{report.id[:8]}_report.md"
+        )
+
+        json_path.write_text(
+            render_report_json(
+                report
+            ),
+
+            encoding="utf-8",
+        )
+
+        markdown_path.write_text(
+            render_report_markdown(
+                report
+            ),
+
+            encoding="utf-8",
         )
 
         # ====================================================
-        # 10. Output
+        # 11. Summary
         # ====================================================
+
+        stats = report.stats
 
         print(
-            "\n=== Security Plan ==="
+            "\n=== Scan Summary ==="
         )
 
         print(
-            result.plan
-            .model_dump_json(
-                indent=2
-            )
+            f"报告 ID: {report.id}"
         )
 
         print(
-            "\n=== Runner Status ==="
+            f"目标: {report.target}"
         )
 
         print(
-            result.status
+            f"请求: {stats.total_requests}"
+            f"（执行 {stats.executed}"
+            f" / 无动作 {stats.no_action}"
+            f" / 失败 {stats.errors}）"
         )
 
-        if (
-            result.finding
-            is None
+        print(
+            f"漏洞发现: "
+            f"{stats.total_findings}"
+        )
+
+        for severity, count in (
+            stats.by_severity.items()
         ):
 
             print(
-                "\nNo Finding generated."
+                f"  {severity}: "
+                f"{count}"
             )
 
-            return
+        if report.findings:
+
+            print(
+                "\n=== Findings ==="
+            )
+
+            for finding in (
+                report.findings
+            ):
+
+                print(
+                    f"[{finding.severity.value}] "
+                    f"{finding.title} "
+                    f"({finding.status.value})"
+                    f" -> "
+                    f"{finding.target}"
+                )
 
         print(
-            "\n=== Finding ==="
+            f"\nJSON 报告: "
+            f"{json_path}"
         )
 
         print(
-            result.finding
-            .model_dump_json(
-                indent=2
-            )
+            f"Markdown 报告: "
+            f"{markdown_path}"
         )
 
     finally:
