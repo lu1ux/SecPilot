@@ -4,14 +4,16 @@ SecPilot is an evidence-driven AI-assisted Web security testing framework.
 
 ## Core Architecture
 
-Agent
+ScanRunner (Batch)
+→ Agent
 → Security Skill
 → Policy Engine
 → MCP / Tool
 → Target
 → Evidence Engine
 → Finding
-→ Report
+→ Risk Engine
+→ Report (JSON / Markdown)
 
 ## Core Principles
 
@@ -23,14 +25,18 @@ Agent
 
 ## Roadmap
 
-- [ ] HTTP Request / Response Model
-- [ ] Scope Policy Engine
-- [ ] HTTP Executor
-- [ ] Evidence Engine
-- [ ] Boolean SQL Injection Skill
-- [ ] MCP Integration
-- [ ] LLM Agent
+- [x] HTTP Request / Response Model
+- [x] Scope Policy Engine
+- [x] HTTP Executor
+- [x] Evidence Engine
+- [x] Boolean SQL Injection Skill
+- [x] MCP Integration
+- [x] LLM Agent
+- [x] Risk Engine
+- [x] Scan Report (JSON / Markdown)
+- [x] Batch Scan Orchestration
 - [ ] Web Recon
+- [ ] Iterative Agent Loop
 - [ ] XSS Skill
 - [ ] IDOR Skill
 - [ ] Benchmark
