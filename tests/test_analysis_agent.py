@@ -1,5 +1,10 @@
 import pytest
 
+from fakes import (
+    FakeProvider,
+    build_registry,
+    build_request,
+)
 from secpilot.agent.analysis import (
     AgentPlanError,
     AnalysisAgent,
@@ -8,81 +13,6 @@ from secpilot.agent.models import (
     AgentAction,
     SecurityPlan,
 )
-from secpilot.core.models import (
-    HttpRequest,
-)
-from secpilot.llm.capabilities import (
-    LLMCapabilities,
-)
-from secpilot.skills.registry import (
-    SkillRegistry,
-)
-
-
-class FakeSkill:
-    pass
-
-
-class FakeProvider:
-
-    name = "fake"
-
-    capabilities = (
-        LLMCapabilities()
-    )
-
-    def __init__(
-        self,
-        result: SecurityPlan,
-    ):
-        self.result = result
-
-    async def generate_text(
-        self,
-        *,
-        system_prompt,
-        user_prompt,
-    ):
-        return ""
-
-    async def generate_structured(
-        self,
-        *,
-        system_prompt,
-        user_prompt,
-        output_model,
-    ):
-        return self.result
-
-
-def build_registry(
-) -> SkillRegistry:
-
-    registry = SkillRegistry()
-
-    registry.register(
-        "boolean_sqli",
-        FakeSkill(),
-    )
-
-    return registry
-
-
-def build_request(
-) -> HttpRequest:
-
-    return HttpRequest(
-        method="GET",
-
-        url=(
-            "http://127.0.0.1/"
-            "product"
-        ),
-
-        params={
-            "id": "1"
-        },
-    )
 
 
 @pytest.mark.asyncio
